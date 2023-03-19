@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:background="@color/ivory"
+    tools:context=".view.MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <com.lionm.taptapwatch.view.WatchModeRadioGroup
+            android:id="@+id/button_group_watch_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layout_time_screen"/>
+
+        <LinearLayout
+            android:id="@+id/layout_sub_mode"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/button_group_watch_mode"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:text="M"
+                android:textSize="22sp"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:background="@drawable/background_sub_mode_button" />
+
+            <TextView
+                android:id="@+id/textview_mode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_sub_mode_screen"
+                android:layout_marginStart="10dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:gravity="center_vertical"
+                android:text="Stop Watch"
+                android:textSize="20sp"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:maxLines="1"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_time_screen"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="22dp"
+            android:paddingBottom="22dp"
+            android:background="@drawable/background_time_screen"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/layout_sub_mode"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <TextView
+                android:id="@+id/textview_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="65sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:gravity="center"
+                tools:text="01"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="65sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:gravity="center"
+                android:text=":" />
+
+            <TextView
+                android:id="@+id/textview_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="65sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:gravity="center"
+                tools:text="23"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="65sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:gravity="center"
+                android:text=":" />
+
+            <TextView
+                android:id="@+id/textview_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="65sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_gothic_coding_regular"
+                android:gravity="center"
+                tools:text="45"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_watch_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_time_screen"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center" >
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_set"
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:text="SET"
+                android:textSize="16sp"
+                android:background="@drawable/background_set_reset_button" />
+
+            <ImageButton
+                android:id="@+id/button_reset"
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_baseline_restart_alt_black_24"
+                android:background="@drawable/background_set_reset_button" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_start_stop"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_watch_control"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_start_stop_button"
+            android:textSize="60sp"
+            android:fontFamily="@font/nanum_gothic_coding_regular"
+            android:text="START"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
