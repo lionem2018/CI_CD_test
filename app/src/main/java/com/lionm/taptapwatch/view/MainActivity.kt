@@ -1,5 +1,7 @@
 package com.lionm.taptapwatch.view
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -10,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.Snackbar
+import com.lionm.taptapwatch.R
 import com.lionm.taptapwatch.data.WatchMode
 import com.lionm.taptapwatch.data.WatchState
 import com.lionm.taptapwatch.databinding.ActivityMainBinding
@@ -22,10 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var isCountDown = false
     private val timer = CustomTimer()
+    private var soundPool: SoundPool? = null
+    private var soundId: Int? = null
 
     private var dialog: CommonSettingDialogFragment? = null
+
+    private var isCountDown = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
+        initSoundPool()
         prepareObserving()
     }
 
@@ -82,7 +89,23 @@ class MainActivity : AppCompatActivity() {
 
         timer.setOnTimeOver {
             viewModel.changeTimerState(WatchState.RESET)
+            soundId?.let { id ->
+                soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+            }
         }
+    }
+
+    private fun initSoundPool() {
+        soundPool = SoundPool.Builder()
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+            .setMaxStreams(1)
+            .build()
+
+        soundId = soundPool?.load(applicationContext, R.raw.alert_simple, 1)
     }
 
     private fun formatTime(time: Long) {
@@ -90,9 +113,9 @@ class MainActivity : AppCompatActivity() {
             val h = (time / 3600000).toInt()
             val m = (time - h * 3600000).toInt() / 60000
             val s = (time - h * 3600000 - m * 60000).toInt() / 1000
-            val hh = if (h < 10) "0$h" else h.toString() + ""
-            val mm = if (m < 10) "0$m" else m.toString() + ""
-            val ss = if (s < 10) "0$s" else s.toString() + ""
+            val hh = if (h < 10) "0$h" else h.toString()
+            val mm = if (m < 10) "0$m" else m.toString()
+            val ss = if (s < 10) "0$s" else s.toString()
 
             binding.textviewHour.text = hh
             binding.textviewMinute.text = mm
@@ -106,6 +129,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.watchUiState.collect { uiState ->
                     when (uiState.watchMode) {
                         WatchMode.STOP_WATCH -> {
+                            binding.buttonSet.isEnabled = false
                             dialog = StopWatchSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
                                 override fun onClickPositiveButton(time: Long) {
@@ -114,11 +138,11 @@ class MainActivity : AppCompatActivity() {
                                 override fun onClickNegativeButton() {
                                     dialog?.dismiss()
                                 }
-
                             })
                             isCountDown = false
                         }
                         WatchMode.TIMER -> {
+                            binding.buttonSet.isEnabled = true
                             dialog = TimerSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
                                 override fun onClickPositiveButton(time: Long) {
