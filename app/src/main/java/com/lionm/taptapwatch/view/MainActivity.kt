@@ -3,9 +3,6 @@ package com.lionm.taptapwatch.view
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -93,6 +90,12 @@ class MainActivity : AppCompatActivity() {
                 soundPool?.play(id, 1f, 1f, 0, 0, 1f)
             }
         }
+
+        timer.setOnAlarm {
+            soundId?.let { id ->
+                soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+            }
+        }
     }
 
     private fun initSoundPool() {
@@ -129,10 +132,12 @@ class MainActivity : AppCompatActivity() {
                 viewModel.watchUiState.collect { uiState ->
                     when (uiState.watchMode) {
                         WatchMode.STOP_WATCH -> {
-                            binding.buttonSet.isEnabled = false
+//                            binding.buttonSet.isEnabled = false
                             dialog = StopWatchSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
-                                override fun onClickPositiveButton(time: Long) {
+                                override fun onClickPositiveButton(time: Long, checkRepetitive: Boolean) {
+                                    timer.alarmTime = time
+                                    timer.isRepetitive = checkRepetitive
                                 }
 
                                 override fun onClickNegativeButton() {
@@ -142,10 +147,10 @@ class MainActivity : AppCompatActivity() {
                             isCountDown = false
                         }
                         WatchMode.TIMER -> {
-                            binding.buttonSet.isEnabled = true
+//                            binding.buttonSet.isEnabled = true
                             dialog = TimerSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
-                                override fun onClickPositiveButton(time: Long) {
+                                override fun onClickPositiveButton(time: Long, checkRepetitive: Boolean) {
                                     timer.currentTime = time
                                     formatTime(time)
                                 }
@@ -168,26 +173,26 @@ class MainActivity : AppCompatActivity() {
                         WatchState.RESET -> {
                             timer.reset()
                             formatTime(0)
-                            binding.buttonStartStop.text = "START"
+                            binding.buttonStartStop.text = getString(R.string.watch_start)
                             binding.buttonStartStop.tag = WatchState.STARTED
                         }
                         WatchState.STARTED -> {
                             when (uiState.watchMode) {
                                 WatchMode.STOP_WATCH -> {
                                     timer.startCountUp()
-                                    binding.buttonStartStop.text = "STOP"
+                                    binding.buttonStartStop.text = getString(R.string.watch_stop)
                                     binding.buttonStartStop.tag = WatchState.PAUSE
                                 }
                                 WatchMode.TIMER -> {
                                     if (timer.currentTime == 0L) {
                                         Snackbar.make(
                                             binding.content,
-                                            "Please set the timer",
+                                            getString(R.string.notice_set_timer),
                                             Snackbar.LENGTH_SHORT
                                         ).show()
                                     } else {
                                         timer.startCountDown()
-                                        binding.buttonStartStop.text = "STOP"
+                                        binding.buttonStartStop.text = getString(R.string.watch_stop)
                                         binding.buttonStartStop.tag = WatchState.PAUSE
                                     }
                                 }
@@ -198,18 +203,10 @@ class MainActivity : AppCompatActivity() {
                         }
                         WatchState.PAUSE -> {
                             timer.pause()
-                            binding.buttonStartStop.text = "START"
+                            binding.buttonStartStop.text = getString(R.string.watch_start)
                             binding.buttonStartStop.tag = WatchState.STARTED
                         }
                     }
-
-                    // for test
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Timer: " + uiState.watchState.name,
-                        Toast.LENGTH_SHORT
-                    ).show()
-
                 }
             }
         }

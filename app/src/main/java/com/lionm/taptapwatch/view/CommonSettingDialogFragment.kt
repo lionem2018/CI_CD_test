@@ -4,7 +4,7 @@ import androidx.fragment.app.DialogFragment
 
 abstract class CommonSettingDialogFragment : DialogFragment() {
     interface DialogEventListener {
-        fun onClickPositiveButton(time: Long)
+        fun onClickPositiveButton(time: Long, checkRepetitive: Boolean)
         fun onClickNegativeButton()
     }
 

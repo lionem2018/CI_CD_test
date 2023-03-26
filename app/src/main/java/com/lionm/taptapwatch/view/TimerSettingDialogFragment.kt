@@ -17,7 +17,7 @@ class TimerSettingDialogFragment : CommonSettingDialogFragment() {
             AlertDialog.Builder(it)
                 .setView(binding?.root)
                 .setPositiveButton("Apply") { _, _ ->
-                    listener?.onClickPositiveButton(calculateTime())
+                    listener?.onClickPositiveButton(calculateTime(), false)
                 }
                 .setNegativeButton("Cancel") { _, _ ->
                 }

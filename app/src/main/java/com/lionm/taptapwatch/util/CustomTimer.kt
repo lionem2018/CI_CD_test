@@ -1,8 +1,5 @@
 package com.lionm.taptapwatch.util
 
-import android.os.SystemClock
-import android.util.Log
-import com.lionm.taptapwatch.data.WatchMode
 import java.util.Timer
 import java.util.TimerTask
 
@@ -13,24 +10,35 @@ class CustomTimer {
 
     private var onTick: ((Long) -> Unit)? = null
     private var onTimeOver: (() -> Unit)? = null
+    private var onAlarm: (() -> Unit)? = null
 
     var currentTime: Long = 0L
+    var alarmTime: Long = 0L
+    var isRepetitive: Boolean = false
 
     fun setOnTick(onTick: (Long) -> Unit) {
         this.onTick = onTick
     }
 
-    fun setOnTimeOver(onTimeOver:() -> Unit) {
+    fun setOnTimeOver(onTimeOver: () -> Unit) {
         this.onTimeOver = onTimeOver
+    }
+
+    fun setOnAlarm(onAlarm: () -> Unit) {
+        this.onAlarm = onAlarm
     }
 
     fun startCountUp() {
         // set timer task
-        val timerTask = object: TimerTask() {
+        val timerTask = object : TimerTask() {
             override fun run() {
                 currentTime += INTERVAL_TIME_UNIT
 
                 onTick?.let { it(currentTime) }
+
+                if (alarmTime > 0L && ((currentTime == alarmTime) || (isRepetitive && currentTime > 0 && currentTime % alarmTime == 0L))) {
+                    onAlarm?.let { it() }
+                }
 
                 if (currentTime <= 0L) {
                     timer?.cancel()
@@ -46,7 +54,7 @@ class CustomTimer {
 
     fun startCountDown() {
         // set timer task
-        val timerTask = object: TimerTask() {
+        val timerTask = object : TimerTask() {
             override fun run() {
                 currentTime -= INTERVAL_TIME_UNIT
 
@@ -80,6 +88,8 @@ class CustomTimer {
     fun reset() {
         // remove time info and cancel timer
         currentTime = 0L
+        isRepetitive = false
+        alarmTime = 0L
         timer?.cancel()
     }
 
