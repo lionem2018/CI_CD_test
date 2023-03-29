@@ -132,7 +132,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.watchUiState.collect { uiState ->
                     when (uiState.watchMode) {
                         WatchMode.STOP_WATCH -> {
-//                            binding.buttonSet.isEnabled = false
                             dialog = StopWatchSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
                                 override fun onClickPositiveButton(time: Long, checkRepetitive: Boolean) {
@@ -147,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                             isCountDown = false
                         }
                         WatchMode.TIMER -> {
-//                            binding.buttonSet.isEnabled = true
                             dialog = TimerSettingDialogFragment()
                             dialog?.setDialogEventListener(object: CommonSettingDialogFragment.DialogEventListener {
                                 override fun onClickPositiveButton(time: Long, checkRepetitive: Boolean) {

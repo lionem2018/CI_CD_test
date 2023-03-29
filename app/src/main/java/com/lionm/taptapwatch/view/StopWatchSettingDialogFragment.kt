@@ -17,6 +17,7 @@ class StopWatchSettingDialogFragment : CommonSettingDialogFragment() {
 
             AlertDialog.Builder(it)
                 .setView(binding?.root)
+                .setTitle("Set Stop Watch Alarm")
                 .setPositiveButton("Apply") { _, _ ->
                     listener?.onClickPositiveButton(calculateTime(), binding?.checkbox?.isChecked ?: false)
                 }
