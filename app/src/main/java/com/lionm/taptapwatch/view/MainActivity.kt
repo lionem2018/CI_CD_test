@@ -80,22 +80,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTimer() {
-        timer.setOnTick { currentTime ->
-            formatTime(currentTime)
-        }
-
-        timer.setOnTimeOver {
-            viewModel.changeTimerState(WatchState.RESET)
-            soundId?.let { id ->
-                soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+        timer.setTimerEventListener(object: CustomTimer.TimerEventListener {
+            override fun onTick(time: Long) {
+                formatTime(time)
             }
-        }
 
-        timer.setOnAlarm {
-            soundId?.let { id ->
-                soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+            override fun onTimeOver() {
+                viewModel.changeTimerState(WatchState.RESET)
+                soundId?.let { id ->
+                    soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+                }
             }
-        }
+
+            override fun onAlarm() {
+                soundId?.let { id ->
+                    soundPool?.play(id, 1f, 1f, 0, 0, 1f)
+                }
+            }
+
+        })
     }
 
     private fun initSoundPool() {

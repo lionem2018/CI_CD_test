@@ -1,31 +1,30 @@
 package com.lionm.taptapwatch.util
 
+import android.os.SystemClock
 import java.util.Timer
 import java.util.TimerTask
 
 private const val INTERVAL_TIME_UNIT = 1000L
 
 class CustomTimer {
+    interface TimerEventListener {
+        fun onTick(time: Long)
+        fun onTimeOver()
+        fun onAlarm()
+    }
     private var timer: Timer? = null
+    private var listener: TimerEventListener? = null
 
-    private var onTick: ((Long) -> Unit)? = null
-    private var onTimeOver: (() -> Unit)? = null
-    private var onAlarm: (() -> Unit)? = null
+    private var baseTime = SystemClock.elapsedRealtime()
 
     var currentTime: Long = 0L
+
+    // for stopwatch
     var alarmTime: Long = 0L
     var isRepetitive: Boolean = false
 
-    fun setOnTick(onTick: (Long) -> Unit) {
-        this.onTick = onTick
-    }
-
-    fun setOnTimeOver(onTimeOver: () -> Unit) {
-        this.onTimeOver = onTimeOver
-    }
-
-    fun setOnAlarm(onAlarm: () -> Unit) {
-        this.onAlarm = onAlarm
+    fun setTimerEventListener(listener: TimerEventListener) {
+        this.listener = listener
     }
 
     fun startCountUp() {
@@ -34,22 +33,16 @@ class CustomTimer {
             override fun run() {
                 currentTime += INTERVAL_TIME_UNIT
 
-                onTick?.let { it(currentTime) }
+                listener?.onTick(currentTime)
 
                 if (alarmTime > 0L && ((currentTime == alarmTime) || (isRepetitive && currentTime > 0 && currentTime % alarmTime == 0L))) {
-                    onAlarm?.let { it() }
-                }
-
-                if (currentTime <= 0L) {
-                    timer?.cancel()
-                    onTimeOver?.let { it() }
+                    listener?.onAlarm()
                 }
             }
-
         }
 
         // set timer and start
-        runTimerTask(timerTask)
+        runTimerTask(timerTask, INTERVAL_TIME_UNIT)
     }
 
     fun startCountDown() {
@@ -58,11 +51,11 @@ class CustomTimer {
             override fun run() {
                 currentTime -= INTERVAL_TIME_UNIT
 
-                onTick?.let { it(currentTime) }
+                listener?.onTick(currentTime)
 
                 if (currentTime <= 0L) {
                     timer?.cancel()
-                    onTimeOver?.let { it() }
+                    listener?.onTimeOver()
                 }
             }
 
@@ -72,12 +65,12 @@ class CustomTimer {
         runTimerTask(timerTask)
     }
 
-    private fun runTimerTask(timerTask: TimerTask) {
+    private fun runTimerTask(timerTask: TimerTask, delay: Long = 0L) {
         timer?.cancel()
 
         // set timer and start
         timer = Timer()
-        timer?.schedule(timerTask, 0L, INTERVAL_TIME_UNIT)
+        timer?.scheduleAtFixedRate(timerTask, delay, INTERVAL_TIME_UNIT)
     }
 
     fun pause() {
