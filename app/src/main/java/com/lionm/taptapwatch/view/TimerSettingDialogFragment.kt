@@ -3,11 +3,21 @@ package com.lionm.taptapwatch.view
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.lionm.taptapwatch.databinding.DialogTimerSettingBinding
 
-class TimerSettingDialogFragment : CommonSettingDialogFragment() {
+class TimerSettingDialogFragment : DialogFragment() {
+    interface DialogEventListener {
+        fun onClickPositiveButton(time: Long)
+        fun onClickNegativeButton()
+    }
 
     private var binding: DialogTimerSettingBinding? = null
+    private var listener: DialogEventListener? = null
+
+    fun setDialogEventListener(listener: DialogEventListener) {
+        this.listener = listener
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -18,7 +28,7 @@ class TimerSettingDialogFragment : CommonSettingDialogFragment() {
                 .setView(binding?.root)
                 .setTitle("Set Timer")
                 .setPositiveButton("Apply") { _, _ ->
-                    listener?.onClickPositiveButton(calculateTime(), false)
+                    listener?.onClickPositiveButton(calculateTime())
                 }
                 .setNegativeButton("Cancel") { _, _ ->
                 }
@@ -42,6 +52,6 @@ class TimerSettingDialogFragment : CommonSettingDialogFragment() {
         val mm = binding?.pickerMm?.value ?: 0
         val ss = binding?.pickerSs?.value ?: 0
 
-        return hh * 3600000L + mm * 60000L + ss * 1000L
+        return hh * 360L + mm * 60L + ss
     }
 }
