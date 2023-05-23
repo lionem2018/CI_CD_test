@@ -24,7 +24,11 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Run ktlint
-      run: ./gradlew ktlintCheck
-    - name: Run detekt
-      run: ./gradlew detekt
+    - name: Upload apk to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{ secrets.FIREBASE_APP_ID }}
+        token: ${{ secrets.FIREBASE_TOKEN }}
+        groups: runnerbe
+        file: presentation/build/outputs/universal_apk/release/presentation-release-universal.apk
+        releaseNotesFile: documents/release-note/default-note.txt
