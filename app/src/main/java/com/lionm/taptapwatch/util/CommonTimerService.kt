@@ -32,6 +32,7 @@ class CommonTimerService : Service() {
         } else {
             CountDownTask(time)
         }
+        
         timer.scheduleAtFixedRate(task, TIMER_INTERVAL, TIMER_INTERVAL)
 
         initSoundPool()
