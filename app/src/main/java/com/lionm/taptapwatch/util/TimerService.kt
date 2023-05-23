@@ -9,7 +9,7 @@ import com.lionm.taptapwatch.R
 import java.util.Timer
 import java.util.TimerTask
 
-class CommonTimerService : Service() {
+class TimerService : Service() {
     override fun onBind(p0: Intent?): IBinder? = null
 
     private val timer = Timer()
