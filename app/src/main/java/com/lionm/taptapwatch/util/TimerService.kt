@@ -33,7 +33,9 @@ class TimerService : Service() {
             CountDownTask(time)
         }
         timer.scheduleAtFixedRate(task, TIMER_INTERVAL, TIMER_INTERVAL)
+
         initSoundPool()
+
         return START_NOT_STICKY
     }
 
