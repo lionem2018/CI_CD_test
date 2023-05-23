@@ -15,9 +15,9 @@ import com.lionm.taptapwatch.R
 import com.lionm.taptapwatch.data.WatchMode
 import com.lionm.taptapwatch.data.WatchState
 import com.lionm.taptapwatch.databinding.ActivityMainBinding
-import com.lionm.taptapwatch.util.TimerService
-import com.lionm.taptapwatch.util.TimerService.Companion.TIMER_ALARM_REPEATABLY
-import com.lionm.taptapwatch.util.TimerService.Companion.TIMER_ALARM_TIME
+import com.lionm.taptapwatch.util.CommonTimerService
+import com.lionm.taptapwatch.util.CommonTimerService.Companion.TIMER_ALARM_REPEATABLY
+import com.lionm.taptapwatch.util.CommonTimerService.Companion.TIMER_ALARM_TIME
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         initView()
         prepareObserving()
 
-        timerServiceIntent = Intent(applicationContext, TimerService::class.java)
-        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+        timerServiceIntent = Intent(applicationContext, CommonTimerService::class.java)
+        registerReceiver(updateTime, IntentFilter(CommonTimerService.TIMER_UPDATED))
     }
 
     private fun initView() {
@@ -117,11 +117,11 @@ class MainActivity : AppCompatActivity() {
                     when (uiState.watchMode) {
                         WatchMode.STOP_WATCH -> {
                             isCountDown = false
-                            timerServiceIntent.putExtra(TimerService.TIMER_MODE, true)
+                            timerServiceIntent.putExtra(CommonTimerService.TIMER_MODE, true)
                         }
                         WatchMode.TIMER -> {
                             isCountDown = true
-                            timerServiceIntent.putExtra(TimerService.TIMER_MODE, false)
+                            timerServiceIntent.putExtra(CommonTimerService.TIMER_MODE, false)
                         }
                         WatchMode.CUSTOM -> {
                             // need to check custom mode
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
     private fun startTimer(watchMode: WatchMode) {
         when (watchMode) {
             WatchMode.STOP_WATCH -> {
-                timerServiceIntent.putExtra(TimerService.TIME_EXTRA, time)
+                timerServiceIntent.putExtra(CommonTimerService.TIME_EXTRA, time)
                 startService(timerServiceIntent)
                 binding.buttonStartStop.text = getString(R.string.watch_stop)
                 binding.buttonStartStop.tag = WatchState.PAUSE
@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 } else {
-                    timerServiceIntent.putExtra(TimerService.TIME_EXTRA, time)
+                    timerServiceIntent.putExtra(CommonTimerService.TIME_EXTRA, time)
                     startService(timerServiceIntent)
                     binding.buttonStartStop.text = getString(R.string.watch_start)
                     binding.buttonStartStop.tag = WatchState.PAUSE
@@ -191,9 +191,9 @@ class MainActivity : AppCompatActivity() {
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            time = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
+            time = intent.getLongExtra(CommonTimerService.TIME_EXTRA, 0L)
 
-            val isCountUp = intent.getBooleanExtra(TimerService.TIMER_MODE, true)
+            val isCountUp = intent.getBooleanExtra(CommonTimerService.TIMER_MODE, true)
             if (isCountUp.not() && time <= 0L) {
                 resetTimer()
             } else {
